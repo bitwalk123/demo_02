@@ -35,7 +35,7 @@ from demo_parser import FileParser
 class Demo(QMainWindow):
     # Application Information
     APP_NAME: str = 'Demo 2'
-    APP_VER: str = '0.1'
+    APP_VER: str = '1.0'
     APP_COPYRIGHT: str = '2021 Fuhito Suguri'
     APP_LICENSE: str = '<a href="https://opensource.org/licenses/MIT">MIT</a>'
 
@@ -264,18 +264,18 @@ class Demo(QMainWindow):
         df: pd.DataFrame = self.db_obj.get_trend_data(param)
 
         # generate trend chart
-        chart = TrendChart(df)
-        pic: QPixmap = chart.getChartPixmap()
-        #fig: matplotlib.figure.Figure = chart.gen_chart()
+        trend = TrendChart(df)
+        w: float = Inches(13.3) / 10000
+        h: float = Inches(3.5) / 10000
+        pixmap: QPixmap = trend.getChartPixmap(w, h)
 
         # save chart as PNG image
-        #image_path: str = tempfile.NamedTemporaryFile(suffix='.png').name
-        #fig.savefig(image_path)
+        image_path: str = tempfile.NamedTemporaryFile(suffix='.png').name
+        pixmap.save(image_path)
 
         # refer layout from master
         slide_layout: pptx.slide.SlideLayout = ppt.slide_layouts[0]
         slide: pptx.slide.Slide = ppt.slides.add_slide(slide_layout)
-        # shapes: pptx.shapes.shapetree.SlideShapes = slide.shapes
         shapes: pptx.shapes.shapetree.SlideShapes = slide.shapes
 
         # slide title
@@ -285,7 +285,7 @@ class Demo(QMainWindow):
         ileft: Inches = Inches(0)
         itop: Inches = Inches(1.35)
         iheight: Inches = Inches(3.5)
-        #slide.shapes.add_picture(image_path, left=ileft, top=itop, height=iheight)
+        slide.shapes.add_picture(image_path, left=ileft, top=itop, height=iheight)
 
     # -------------------------------------------------------------------------
     #  status_changed_combo
@@ -303,8 +303,6 @@ class Demo(QMainWindow):
         df: pd.DataFrame = self.db_obj.get_trend_data(param)
         trend = TrendChart(df)
         self.setCentralWidget(trend)
-        # canvas: matplotlib.backends.backend_qt5agg.FigureCanvasQTAgg = trend.get_canvas()
-        # self.setCentralWidget(canvas)
 
 
 def main():

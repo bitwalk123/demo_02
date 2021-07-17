@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
+from PySide6.QtGui import (
+    QPixmap,
+)
 from PySide6.QtWidgets import (
     QApplication,
     QComboBox,
@@ -206,7 +209,7 @@ class Demo(QMainWindow):
         dialog = QFileDialog()
         dialog.setNameFilter(filters)
 
-        if not dialog.exec_():
+        if not dialog.exec():
             return
 
         # read selected file
@@ -258,10 +261,11 @@ class Demo(QMainWindow):
     # -------------------------------------------------------------------------
     def gen_ppt_slide(self, ppt: Presentation, param: str):
         # get dataframe for specified parameter
-        #df: pd.DataFrame = self.db_obj.get_trend_data(param)
+        df: pd.DataFrame = self.db_obj.get_trend_data(param)
 
         # generate trend chart
-        #chart = TrendChart(df)
+        chart = TrendChart(df)
+        pic: QPixmap = chart.getChartPixmap()
         #fig: matplotlib.figure.Figure = chart.gen_chart()
 
         # save chart as PNG image

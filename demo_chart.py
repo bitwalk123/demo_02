@@ -13,6 +13,7 @@ from PySide6.QtCharts import (
     QValueAxis,
 )
 from PySide6.QtWidgets import (
+    QLabel,
     QVBoxLayout,
     QWidget,
 )
@@ -27,9 +28,10 @@ class TrendChart(QChartView):
         self.df = df
         self.columns = df.columns.values.tolist()
 
-        chart: QChart = self.init_ui()
-        self.setChart(chart)
+        self.init_ui()
+        self.setChart(self.chart)
         self.setRenderHint(QPainter.Antialiasing)
+        self.value_label = QLabel(self)
 
     def init_ui(self) -> QChart:
         series = QLineSeries()
@@ -38,22 +40,41 @@ class TrendChart(QChartView):
             y = float(self.df.iat[r, 1])
             series.append(QPointF(x, y))
 
-        chart = QChart()
-        chart.setTitle(self.columns[1])
-        chart.addSeries(series)
-        chart.legend().hide()
+        self.chart = QChart()
+        # series.setPointsVisible(True)
+        series.hovered.connect(self.show_tool_tip)
+
+        self.chart.setTitle(self.columns[1])
+        self.chart.addSeries(series)
+        self.chart.legend().hide()
 
         axisX = QValueAxis()
         axisX.setTitleText(self.columns[0])
-        chart.addAxis(axisX, Qt.AlignBottom)
+        self.chart.addAxis(axisX, Qt.AlignBottom)
         series.attachAxis(axisX)
 
         axisY = QValueAxis()
         axisY.setTitleText(self.columns[1])
-        chart.addAxis(axisY, Qt.AlignLeft)
+        self.chart.addAxis(axisY, Qt.AlignLeft)
         series.attachAxis(axisY)
 
-        return chart
+    # -------------------------------------------------------------------------
+    #  show_tool_tip
+    #
+    #  Reference
+    #    https://stackoverflow.com/questions/58350723/qchart-add-axis-not-show-and-when-hovered-info-not-work-correct
+    # -------------------------------------------------------------------------
+    def show_tool_tip(self, point: QPointF, state: bool):
+        if state:
+            pos = self.chart.mapToPosition(point)
+            x = pos.x()
+            y = pos.y()
+            self.value_label.move(int(x), int(y))
+            label_str: str = '\n({0}, {1})'.format(str(x), str(y))
+            self.value_label.setText(label_str)
+            self.value_label.show()
+        else:
+            self.value_label.hide()
 
     # -------------------------------------------------------------------------
     #  getChartPixmap

@@ -82,7 +82,7 @@ class TrendChart(QChartView):
     #  Reference
     #    https://stackoverflow.com/questions/43046875/qtchart-c-saving-a-chart-which-wasnt-displayed
     # -------------------------------------------------------------------------
-    def getChartPixmap(self, width_image: float, height_image: float) -> QPixmap:
+    def getChartPixmap(self, width_image: int, height_image: int) -> QPixmap:
         w = QWidget()
         w.resize(width_image, height_image)
         vl = QVBoxLayout()

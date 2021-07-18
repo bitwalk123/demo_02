@@ -265,8 +265,8 @@ class Demo(QMainWindow):
 
         # generate trend chart
         trend = TrendChart(df)
-        w: float = Inches(13.3) / 10000
-        h: float = Inches(3.5) / 10000
+        w: int = int(Inches(13.3) / 10000)
+        h: int = int(Inches(3.5) / 10000)
         pixmap: QPixmap = trend.getChartPixmap(w, h)
 
         # save chart as PNG image
